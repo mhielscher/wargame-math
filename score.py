@@ -7,16 +7,27 @@ import simplejson
 
 from weapons import *
 
+# Thoroughly seed the randomizer
+if __name__ == "__main__":
+    import random
+    random.seed()
+    f = open("/dev/urandom", "rb")
+    rnd_str = f.read(8)
+    random.seed(rnd_str)
+
 def print_points(error, coef, fitness):
     print "Coefficients: %s" % (coef)
     total_diff = 0
+    total_abs_diff = 0
     for name, data, target in weapons_data:
         fitn = fitness(data, coef, target)
         diff = target - fitn
         total_diff += diff
+        total_abs_diff += abs(diff)
         print "%s: %f calc pts vs. %f target pts (%f delta)" % (name, fitn, target, diff)
     print "Max delta from target: %f" % (error)
     print "Mean difference: %f" % (total_diff/len(weapons_data))
+    print "Mean abs difference: %f" % (total_abs_diff/len(weapon_data))
 
 class Linear:
     
@@ -238,11 +249,6 @@ class Nonlinear:
         return coef, exp
 
 if __name__ == "__main__":
-    random.seed()
-    f = open("/dev/urandom", "rb")
-    rnd_str = f.read(8)
-    random.seed(rnd_str)
-    
     model = Linear()
     #model = Nonlinear()
     
