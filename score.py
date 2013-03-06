@@ -27,7 +27,7 @@ def print_points(error, coef, fitness):
         print "%s: %f calc pts vs. %f target pts (%f delta)" % (name, fitn, target, diff)
     print "Max delta from target: %f" % (error)
     print "Mean difference: %f" % (total_diff/len(weapons_data))
-    print "Mean abs difference: %f" % (total_abs_diff/len(weapon_data))
+    print "Mean abs difference: %f" % (total_abs_diff/len(weapons_data))
 
 class Linear:
     
