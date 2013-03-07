@@ -127,7 +127,7 @@ class LinearPopulation(Population):
     initPopulation = 5
     
     # cull to this many children after each generation
-    childCull = 10
+    childCull = 5
 
     # number of children to create after each generation
     childCount = 100
@@ -137,15 +137,15 @@ class LinearPopulation(Population):
 class PolynomialPopulation(Population):
 
     species = PolynomialStatsSolver
-    initPopulation = 100
+    initPopulation = 4
     
     # cull to this many children after each generation
-    childCull = 40
+    childCull = 6
 
     # number of children to create after each generation
-    childCount = 600
+    childCount = 100
     
-    numNewOrganisms = 16
+    numNewOrganisms = 2
 
 
 # create a new population, with randomly created members
