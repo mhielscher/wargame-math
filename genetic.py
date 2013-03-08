@@ -21,12 +21,13 @@ if __name__ == "__main__":
     rnd_str = f.read(8)
     random.seed(rnd_str)
 
-def print_points(error, values, score, outfile=sys.stdout):
-    print >>outfile, "Values: %s" % (values)
+def print_points(error, coefficients, exponents, score, outfile=sys.stdout):
+    print >>outfile, "Coefficients: %s" % (coefficients)
+    print >>outfile, "Exponents: %s" % (exponents)
     total_diff = 0
     total_abs_diff = 0
     for name, data, target in weapons_data:
-        fitn = score(data, values[:len(values)/2], values[len(values)/2:])
+        fitn = score(data, coefficients, exponents)
         diff = target - fitn
         total_diff += diff
         total_abs_diff += abs(diff)
@@ -104,13 +105,13 @@ class PolynomialStatsSolver(Organism):
     def individual_fitness(self, data, coefficients, exponents, target):
         fitness_threshold = 0.25
         offset = abs(self.score(data, coefficients, exponents) - target)
-        if offset > fitness_threshold:
-            offset *= offset+(1-fitness_threshold)
+        #if offset > fitness_threshold:
+        #    offset *= offset+(1-fitness_threshold)
         return offset
 
     def fitness(self):
-        coefficients = [self[str(i)] for i in xrange(weapon_data_len)]
-        exponents = [self[str(i+weapon_data_len)] for i in xrange(weapon_data_len)]
+        coefficients = [round(self[str(i)], 3) for i in xrange(weapon_data_len)]
+        exponents = [round(self[str(i+weapon_data_len)], 3) for i in xrange(weapon_data_len)]
         
         total_fitness = 0
         for name, data, target in weapons_data:
@@ -119,7 +120,7 @@ class PolynomialStatsSolver(Organism):
 
     def __repr__(self):
         return "<fitness=%f, coefficients=%s, exponents=%s>" % (
-            self.get_fitness(), [self[str(i)] for i in xrange(weapon_data_len)], [self[str(i+weapon_data_len)] for i in xrange(weapon_data_len)])
+            self.get_fitness(), [round(self[str(i)], 3) for i in xrange(weapon_data_len)], [round(self[str(i+weapon_data_len)], 3) for i in xrange(weapon_data_len)])
 
 class LinearPopulation(Population):
 
@@ -167,7 +168,7 @@ def main():
 
             # and dump it out
             #print [("%.2f %.2f" % (o['x1'], o['x2'])) for o in pop.organisms]
-            best = pop.organisms[0]
+            best = pop.best()
             print "Generation %d, Fitness=%.4f" % (generations, best.get_fitness())
             if best.get_fitness() < target_fitness:
                 break
@@ -175,10 +176,15 @@ def main():
     except KeyboardInterrupt:
         pass
     print "Executed %d generations (%f generations/sec)" % (generations, float(generations)/(time.time()-timer_start))
+    #print best.get_fitness()
+    #print best.fitness()
+    #print best
     
-    values = [best[name] for name in best.genome]
+    coefficients = [round(best[str(i)], 3) for i in xrange(weapon_data_len)]
+    exponents = [round(best[str(i+weapon_data_len)], 3) for i in xrange(weapon_data_len)]
     filename = "gen-%s.out" % (repr(timer_start)[-4:])
-    print_points(best.get_fitness(), values, best.score, open(filename, 'w'))
+    f = open(filename, 'w')
+    print_points(best.get_fitness(), coefficients, exponents, best.score, f)
 
 if __name__ == '__main__':
     main()
